@@ -1,0 +1,660 @@
+<!doctype html>
+<html>
+<head>
+<meta charset='UTF-8'><meta name='viewport' content='width=device-width initial-scale=1'>
+<title>cookie和session学习笔记.md</title><link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,700,400&subset=latin,latin-ext' rel='stylesheet' type='text/css'><style type='text/css'>html, body {overflow-x: initial !important;}.CodeMirror { height: auto; }
+.CodeMirror-scroll { overflow-y: hidden; overflow-x: auto; }
+.CodeMirror-lines { padding: 4px 0px; }
+.CodeMirror pre { }
+.CodeMirror-scrollbar-filler, .CodeMirror-gutter-filler { background-color: white; }
+.CodeMirror-gutters { border-right-width: 1px; border-right-style: solid; border-right-color: rgb(221, 221, 221); background-color: rgb(247, 247, 247); white-space: nowrap; }
+.CodeMirror-linenumbers { }
+.CodeMirror-linenumber { padding: 0px 3px 0px 5px; text-align: right; color: rgb(153, 153, 153); }
+.CodeMirror div.CodeMirror-cursor { border-left-width: 1px; border-left-style: solid; border-left-color: black; z-index: 3; }
+.CodeMirror div.CodeMirror-secondarycursor { border-left-width: 1px; border-left-style: solid; border-left-color: silver; }
+.CodeMirror.cm-keymap-fat-cursor div.CodeMirror-cursor { width: auto; border: 0px; background-color: rgb(119, 238, 119); z-index: 1; background-position: initial initial; background-repeat: initial initial; }
+.CodeMirror div.CodeMirror-cursor.CodeMirror-overwrite { }
+.cm-tab { display: inline-block; }
+.cm-s-typora-default .cm-header, .cm-s-typora-default .cm-property { color: rgb(217, 79, 138); }
+.cm-s-typora-default pre.cm-header1:not(.cm-atom) :not(.cm-overlay) { font-size: 2rem; line-height: 2rem; }
+.cm-s-typora-default pre.cm-header2:not(.cm-atom) :not(.cm-overlay) { font-size: 1.4rem; line-height: 1.4rem; }
+.cm-s-typora-default .cm-atom, .cm-s-typora-default .cm-number { color: rgb(149, 132, 134); }
+.cm-s-typora-default .cm-table-row, .cm-s-typora-default .cm-block-start { font-family: monospace; }
+.cm-s-typora-default .cm-comment, .cm-s-typora-default .cm-code { color: rgb(74, 90, 159); font-family: monospace; }
+.cm-s-typora-default .cm-tag { color: rgb(169, 68, 66); }
+.cm-s-typora-default .cm-string { color: rgb(126, 134, 169); }
+.cm-s-typora-default .cm-link { color: rgb(196, 122, 15); text-decoration: underline; }
+.cm-s-typora-default .cm-variable-2, .cm-s-typora-default .cm-variable-1 { color: inherit; }
+.cm-s-typora-default .cm-overlay { font-size: 1rem; font-family: monospace; }
+.CodeMirror.cm-s-typora-default div.CodeMirror-cursor { border-left-width: 3px; border-left-style: solid; border-left-color: rgb(228, 98, 154); }
+.cm-s-typora-default .CodeMirror-activeline-background { left: -60px; right: -30px; background-color: rgba(204, 204, 204, 0.2); background-position: initial initial; background-repeat: initial initial; }
+.cm-s-typora-default .CodeMirror-gutters { border-right-style: none; background-color: inherit; }
+.cm-s-typora-default .cm-trailing-space-new-line::after, .cm-startspace::after, .cm-starttab .cm-tab::after { content: '•'; position: absolute; left: 0px; opacity: 0; font-family: LetterGothicStd, monospace; }
+.os-windows .cm-startspace::after, .os-windows .cm-starttab .cm-tab::after { left: -0.1em; }
+.cm-starttab .cm-tab::after { content: ' '; }
+.cm-startspace, .cm-tab, .cm-starttab, .cm-trailing-space-a, .cm-trailing-space-b, .cm-trailing-space-new-line { font-family: monospace; position: relative; }
+.cm-s-typora-default .cm-trailing-space-new-line::after { content: '↓'; opacity: 0.3; }
+.cm-s-inner .cm-keyword { color: rgb(119, 0, 136); }
+.cm-s-inner .cm-atom, .cm-s-inner.cm-atom { color: rgb(34, 17, 153); }
+.cm-s-inner .cm-number { color: rgb(17, 102, 68); }
+.cm-s-inner .cm-def { color: rgb(0, 0, 255); }
+.cm-s-inner .cm-variable { color: black; }
+.cm-s-inner .cm-variable-2 { color: rgb(0, 85, 170); }
+.cm-s-inner .cm-variable-3 { color: rgb(0, 136, 85); }
+.cm-s-inner .cm-property { color: black; }
+.cm-s-inner .cm-operator { color: rgb(152, 26, 26); }
+.cm-s-inner .cm-comment, .cm-s-inner.cm-comment { color: rgb(170, 85, 0); }
+.cm-s-inner .cm-string { color: rgb(170, 17, 17); }
+.cm-s-inner .cm-string-2 { color: rgb(255, 85, 0); }
+.cm-s-inner .cm-meta { color: rgb(85, 85, 85); }
+.cm-s-inner .cm-qualifier { color: rgb(85, 85, 85); }
+.cm-s-inner .cm-builtin { color: rgb(51, 0, 170); }
+.cm-s-inner .cm-bracket { color: rgb(153, 153, 119); }
+.cm-s-inner .cm-tag { color: rgb(17, 119, 0); }
+.cm-s-inner .cm-attribute { color: rgb(0, 0, 204); }
+.cm-s-inner .cm-header, .cm-s-inner.cm-header { color: blue; }
+.cm-s-inner .cm-quote, .cm-s-inner.cm-quote { color: rgb(0, 153, 0); }
+.cm-s-inner .cm-hr, .cm-s-inner.cm-hr { color: rgb(153, 153, 153); }
+.cm-s-inner .cm-link, .cm-s-inner.cm-link { color: rgb(0, 0, 204); }
+.cm-negative { color: rgb(221, 68, 68); }
+.cm-positive { color: rgb(34, 153, 34); }
+.cm-header, .cm-strong { font-weight: bold; }
+.cm-del { text-decoration: line-through; }
+.cm-em { font-style: italic; }
+.cm-link { text-decoration: underline; }
+.cm-error { color: rgb(255, 0, 0); }
+.cm-invalidchar { color: rgb(255, 0, 0); }
+.cm-constant { color: rgb(38, 139, 210); }
+.cm-defined { color: rgb(181, 137, 0); }
+div.CodeMirror span.CodeMirror-matchingbracket { color: rgb(0, 255, 0); }
+div.CodeMirror span.CodeMirror-nonmatchingbracket { color: rgb(255, 34, 34); }
+.cm-s-inner .CodeMirror-activeline-background { background-image: inherit; background-size: inherit; background-attachment: inherit; background-origin: inherit; background-clip: inherit; background-color: inherit; background-position: inherit inherit; background-repeat: inherit inherit; }
+.CodeMirror { position: relative; overflow: hidden; }
+.CodeMirror-scroll { margin-bottom: -30px; margin-right: -30px; padding-bottom: 30px; padding-right: 30px; height: 100%; outline: none; position: relative; box-sizing: content-box; }
+.CodeMirror-sizer { position: relative; }
+.CodeMirror-vscrollbar, .CodeMirror-hscrollbar, .CodeMirror-scrollbar-filler, .CodeMirror-gutter-filler { position: absolute; z-index: 6; display: none; }
+.CodeMirror-vscrollbar { right: 0px; top: 0px; overflow-x: hidden; overflow-y: scroll; }
+.CodeMirror-hscrollbar { bottom: 0px; left: 0px; overflow-y: hidden; overflow-x: scroll; }
+.CodeMirror-scrollbar-filler { right: 0px; bottom: 0px; }
+.CodeMirror-gutter-filler { left: 0px; bottom: 0px; }
+.CodeMirror-gutters { position: absolute; left: 0px; top: 0px; padding-bottom: 30px; z-index: 3; }
+.CodeMirror-gutter { white-space: normal; height: 100%; box-sizing: content-box; padding-bottom: 30px; margin-bottom: -32px; display: inline-block; }
+.CodeMirror-gutter-elt { position: absolute; cursor: default; z-index: 4; }
+.CodeMirror-lines { cursor: text; }
+.CodeMirror pre { border-top-left-radius: 0px; border-top-right-radius: 0px; border-bottom-right-radius: 0px; border-bottom-left-radius: 0px; border-width: 0px; background-color: transparent; font-family: inherit; font-size: inherit; margin: 0px; white-space: pre; word-wrap: normal; color: inherit; z-index: 2; position: relative; overflow: visible; background-position: initial initial; background-repeat: initial initial; }
+.CodeMirror-wrap pre { word-wrap: break-word; white-space: pre-wrap; word-break: normal; }
+.CodeMirror-code pre { border-right-width: 30px; border-right-style: solid; border-right-color: transparent; width: -webkit-fit-content; }
+.CodeMirror-wrap .CodeMirror-code pre { border-right-style: none; width: auto; }
+.CodeMirror-linebackground { position: absolute; left: 0px; right: 0px; top: 0px; bottom: 0px; z-index: 0; }
+.CodeMirror-linewidget { position: relative; z-index: 2; overflow: auto; }
+.CodeMirror-widget { }
+.CodeMirror-wrap .CodeMirror-scroll { overflow-x: hidden; }
+.CodeMirror-measure { position: absolute; width: 100%; height: 0px; overflow: hidden; visibility: hidden; }
+.CodeMirror-measure pre { position: static; }
+.CodeMirror div.CodeMirror-cursor { position: absolute; visibility: hidden; border-right-style: none; width: 0px; }
+.CodeMirror div.CodeMirror-cursor { visibility: hidden; }
+.CodeMirror-focused div.CodeMirror-cursor { visibility: inherit; }
+.CodeMirror-selected { background-color: rgb(217, 217, 217); background-position: initial initial; background-repeat: initial initial; }
+.CodeMirror-focused .CodeMirror-selected { background-color: rgb(215, 212, 240); background-position: initial initial; background-repeat: initial initial; }
+.cm-searching { background-color: rgba(255, 255, 0, 0.4); background-position: initial initial; background-repeat: initial initial; }
+.CodeMirror span { }
+@media print { 
+  .CodeMirror div.CodeMirror-cursor { visibility: hidden; }
+}
+.CodeMirror-lint-markers { width: 16px; }
+.CodeMirror-lint-tooltip { background-color: infobackground; border: 1px solid black; border-top-left-radius: 4px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; color: infotext; font-family: monospace; overflow: hidden; padding: 2px 5px; position: fixed; white-space: pre-wrap; z-index: 10000; max-width: 600px; opacity: 0; transition: opacity 0.4s; font-size: 0.8em; }
+.CodeMirror-lint-mark-error, .CodeMirror-lint-mark-warning { background-position: left bottom; background-repeat: repeat no-repeat; }
+.CodeMirror-lint-mark-error { background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAADCAYAAAC09K7GAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB9sJDw4cOCW1/KIAAAAZdEVYdENvbW1lbnQAQ3JlYXRlZCB3aXRoIEdJTVBXgQ4XAAAAHElEQVQI12NggIL/DAz/GdA5/xkY/qPKMDAwAADLZwf5rvm+LQAAAABJRU5ErkJggg==); }
+.CodeMirror-lint-marker-error, .CodeMirror-lint-marker-warning { cursor: pointer; display: inline-block; height: 16px; width: 16px; vertical-align: middle; position: relative; background-position: center center; background-repeat: no-repeat no-repeat; }
+.CodeMirror-lint-message-error, .CodeMirror-lint-message-warning { padding-left: 18px; background-position: left top; background-repeat: no-repeat no-repeat; }
+.CodeMirror-lint-marker-error, .CodeMirror-lint-message-error { background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAHlBMVEW7AAC7AACxAAC7AAC7AAAAAAC4AAC5AAD///+7AAAUdclpAAAABnRSTlMXnORSiwCK0ZKSAAAATUlEQVR42mWPOQ7AQAgDuQLx/z8csYRmPRIFIwRGnosRrpamvkKi0FTIiMASR3hhKW+hAN6/tIWhu9PDWiTGNEkTtIOucA5Oyr9ckPgAWm0GPBog6v4AAAAASUVORK5CYII=); }
+.CodeMirror-lint-marker-warning, .CodeMirror-lint-message-warning { background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAANlBMVEX/uwDvrwD/uwD/uwD/uwD/uwD/uwD/uwD/uwD6twD/uwAAAADurwD2tQD7uAD+ugAAAAD/uwDhmeTRAAAADHRSTlMJ8mN1EYcbmiixgACm7WbuAAAAVklEQVR42n3PUQqAIBBFUU1LLc3u/jdbOJoW1P08DA9Gba8+YWJ6gNJoNYIBzAA2chBth5kLmG9YUoG0NHAUwFXwO9LuBQL1giCQb8gC9Oro2vp5rncCIY8L8uEx5ZkAAAAASUVORK5CYII=); }
+.CodeMirror-lint-marker-multiple { background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAcAAAAHCAMAAADzjKfhAAAACVBMVEUAAAAAAAC/v7914kyHAAAAAXRSTlMAQObYZgAAACNJREFUeNo1ioEJAAAIwmz/H90iFFSGJgFMe3gaLZ0od+9/AQZ0ADosbYraAAAAAElFTkSuQmCC); width: 100%; height: 100%; background-position: right bottom; background-repeat: no-repeat no-repeat; }
+
+
+html { font-size: 14px; background-color: rgb(255, 255, 255); color: rgb(51, 51, 51); }
+body { margin: 0px; padding: 0px; height: auto; bottom: 0px; top: 0px; left: 0px; right: 0px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 1rem; line-height: 1.42857143; overflow-x: hidden; background-image: inherit; background-size: inherit; background-attachment: inherit; background-origin: inherit; background-clip: inherit; background-color: inherit; background-position: inherit inherit; background-repeat: inherit inherit; }
+a:active, a:hover { outline: 0px; }
+.in-text-selection, ::selection { background-color: rgb(181, 214, 252); text-shadow: none; background-position: initial initial; background-repeat: initial initial; }
+#write { margin: 0px auto; height: auto; width: inherit; word-break: normal; word-wrap: break-word; position: relative; padding-bottom: 70px; white-space: pre-wrap; overflow-x: auto; }
+.for-image #write { padding-left: 8px; padding-right: 8px; }
+body.typora-export { padding-left: 30px; padding-right: 30px; }
+@media screen and (max-width: 500px) { 
+  body.typora-export { padding-left: 0px; padding-right: 0px; }
+  .CodeMirror-sizer { margin-left: 0px !important; }
+  .CodeMirror-gutters { display: none !important; }
+}
+.typora-export #write { margin: 0px auto; }
+#write > p:first-child, #write > ul:first-child, #write > ol:first-child, #write > pre:first-child, #write > blockquote:first-child, #write > div:first-child, #write > table:first-child { margin-top: 30px; }
+#write li > table:first-child { margin-top: -20px; }
+img { max-width: 100%; vertical-align: middle; }
+input, button, select, textarea { color: inherit; font-family: inherit; font-size: inherit; font-style: inherit; font-variant-caps: inherit; font-weight: inherit; line-height: inherit; }
+input[type="checkbox"], input[type="radio"] { line-height: normal; padding: 0px; }
+::before, ::after, * { box-sizing: border-box; }
+#write p, #write h1, #write h2, #write h3, #write h4, #write h5, #write h6, #write div, #write pre { width: inherit; }
+#write p, #write h1, #write h2, #write h3, #write h4, #write h5, #write h6 { position: relative; }
+h1 { font-size: 2rem; }
+h2 { font-size: 1.8rem; }
+h3 { font-size: 1.6rem; }
+h4 { font-size: 1.4rem; }
+h5 { font-size: 1.2rem; }
+h6 { font-size: 1rem; }
+p { -webkit-margin-before: 1rem; -webkit-margin-after: 1rem; -webkit-margin-start: 0px; -webkit-margin-end: 0px; }
+.mathjax-block { margin-top: 0px; margin-bottom: 0px; -webkit-margin-before: 0rem; -webkit-margin-after: 0rem; }
+.hidden { display: none; }
+.md-blockmeta { color: rgb(204, 204, 204); font-weight: bold; font-style: italic; }
+a { cursor: pointer; }
+#write input[type="checkbox"] { cursor: pointer; width: inherit; height: inherit; margin: 4px 0px 0px; }
+tr { break-inside: avoid; break-after: auto; }
+thead { display: table-header-group; }
+table { border-collapse: collapse; border-spacing: 0px; width: 100%; overflow: auto; break-inside: auto; text-align: left; }
+table.md-table td { min-width: 80px; }
+.CodeMirror-gutters { border-right-width: 0px; background-color: inherit; }
+.CodeMirror { text-align: left; }
+.CodeMirror-placeholder { opacity: 0.3; }
+.CodeMirror pre { padding: 0px 4px; }
+.CodeMirror-lines { padding: 0px; }
+div.hr:focus { cursor: none; }
+pre { white-space: pre-wrap; }
+.CodeMirror-gutters { margin-right: 4px; }
+.md-fences { font-size: 0.9rem; display: block; break-inside: avoid; text-align: left; overflow: visible; white-space: pre; background-image: inherit; background-size: inherit; background-attachment: inherit; background-origin: inherit; background-clip: inherit; background-color: inherit; position: relative !important; background-position: inherit inherit; background-repeat: inherit inherit; }
+.md-diagram-panel { width: 100%; margin-top: 10px; text-align: center; padding-top: 0px; padding-bottom: 8px; overflow-x: auto; }
+.md-fences .CodeMirror.CodeMirror-wrap { top: -1.6em; margin-bottom: -1.6em; }
+.md-fences.mock-cm { white-space: pre-wrap; }
+.show-fences-line-number .md-fences { padding-left: 0px; }
+.show-fences-line-number .md-fences.mock-cm { padding-left: 40px; }
+.footnotes { opacity: 0.8; font-size: 0.9rem; padding-top: 1em; padding-bottom: 1em; }
+.footnotes + .footnotes { margin-top: -1em; }
+.md-reset { margin: 0px; padding: 0px; border: 0px; outline: 0px; vertical-align: top; background-color: transparent; text-decoration: none; text-shadow: none; float: none; position: static; width: auto; height: auto; white-space: nowrap; cursor: inherit; line-height: normal; font-weight: normal; text-align: left; box-sizing: content-box; direction: ltr; background-position: initial initial; background-repeat: initial initial; }
+li div { padding-top: 0px; }
+blockquote { margin: 1rem 0px; }
+li p, li .mathjax-block { margin: 0.5rem 0px; }
+li { margin: 0px; position: relative; }
+blockquote > :last-child { margin-bottom: 0px; }
+blockquote > :first-child { margin-top: 0px; }
+.footnotes-area { color: rgb(136, 136, 136); margin-top: 0.714rem; padding-bottom: 0.143rem; }
+@media print { 
+  html, body { height: 100%; }
+  .typora-export * { -webkit-print-color-adjust: exact; }
+  h1, h2, h3, h4, h5, h6 { break-after: avoid-page; orphans: 2; }
+  p { orphans: 4; }
+  html.blink-to-pdf { font-size: 13px; }
+  .typora-export #write { padding-left: 1cm; padding-right: 1cm; }
+  .typora-export #write::after { height: 0px; }
+  @page { margin: 20mm 0mm; }
+}
+.footnote-line { margin-top: 0.714em; font-size: 0.7em; }
+a img, img a { cursor: pointer; }
+pre.md-meta-block { font-size: 0.8rem; min-height: 2.86rem; white-space: pre-wrap; background-color: rgb(204, 204, 204); display: block; overflow-x: hidden; background-position: initial initial; background-repeat: initial initial; }
+p .md-image:only-child { display: inline-block; width: 100%; text-align: center; }
+#write .MathJax_Display { margin: 0.8em 0px 0px; }
+.mathjax-block { white-space: pre; overflow: hidden; width: 100%; }
+p + .mathjax-block { margin-top: -1.143rem; }
+.mathjax-block:not(:empty)::after { display: none; }
+[contenteditable="true"]:active, [contenteditable="true"]:focus { outline: none; box-shadow: none; }
+.task-list { list-style-type: none; }
+.task-list-item { position: relative; padding-left: 1em; }
+.task-list-item input { position: absolute; top: 0px; left: 0px; }
+.math { font-size: 1rem; }
+.md-toc { min-height: 3.58rem; position: relative; font-size: 0.9rem; border-top-left-radius: 10px; border-top-right-radius: 10px; border-bottom-right-radius: 10px; border-bottom-left-radius: 10px; }
+.md-toc-content { position: relative; margin-left: 0px; }
+.md-toc::after, .md-toc-content::after { display: none; }
+.md-toc-item { display: block; color: rgb(65, 131, 196); text-decoration: none; }
+.md-toc-inner:hover { }
+.md-toc-inner { display: inline-block; cursor: pointer; }
+.md-toc-h1 .md-toc-inner { margin-left: 0px; font-weight: bold; }
+.md-toc-h2 .md-toc-inner { margin-left: 2em; }
+.md-toc-h3 .md-toc-inner { margin-left: 4em; }
+.md-toc-h4 .md-toc-inner { margin-left: 6em; }
+.md-toc-h5 .md-toc-inner { margin-left: 8em; }
+.md-toc-h6 .md-toc-inner { margin-left: 10em; }
+@media screen and (max-width: 48em) { 
+  .md-toc-h3 .md-toc-inner { margin-left: 3.5em; }
+  .md-toc-h4 .md-toc-inner { margin-left: 5em; }
+  .md-toc-h5 .md-toc-inner { margin-left: 6.5em; }
+  .md-toc-h6 .md-toc-inner { margin-left: 8em; }
+}
+a.md-toc-inner { font-size: inherit; font-style: inherit; font-weight: inherit; line-height: inherit; }
+.footnote-line a:not(.reversefootnote) { color: inherit; }
+.md-attr { display: none; }
+.md-fn-count::after { content: '.'; }
+.md-tag { opacity: 0.5; }
+.md-comment { color: rgb(162, 127, 3); opacity: 0.8; font-family: monospace; }
+code { text-align: left; }
+h1 .md-tag, h2 .md-tag, h3 .md-tag, h4 .md-tag, h5 .md-tag, h6 .md-tag { font-weight: initial; opacity: 0.35; }
+a.md-print-anchor { border: none !important; display: inline-block !important; position: absolute !important; width: 1px !important; right: 0px !important; outline: none !important; background-color: transparent !important; text-shadow: initial !important; background-position: initial initial !important; background-repeat: initial initial !important; }
+.md-inline-math .MathJax_SVG .noError { display: none !important; }
+.mathjax-block .MathJax_SVG_Display { text-align: center; margin: 1em 0em; position: relative; text-indent: 0px; max-width: none; max-height: none; min-height: 0px; min-width: 100%; width: auto; display: block !important; }
+.MathJax_SVG_Display, .md-inline-math .MathJax_SVG_Display { width: auto; margin: inherit; display: inline-block !important; }
+.MathJax_SVG .MJX-monospace { font-family: monospace; }
+.MathJax_SVG .MJX-sans-serif { font-family: sans-serif; }
+.MathJax_SVG { display: inline; font-style: normal; font-weight: normal; line-height: normal; zoom: 90%; text-indent: 0px; text-align: left; text-transform: none; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; direction: ltr; max-width: none; max-height: none; min-width: 0px; min-height: 0px; border: 0px; padding: 0px; margin: 0px; }
+.MathJax_SVG * { transition: none; }
+
+
+@include-when-export url(http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,700,400&subset=latin,latin-ext);
+
+/**
+ * css forked from https://github.com/GitbookIO/gitbook 
+ * www.gitbook.com
+ * Apache License
+ * https://github.com/GitbookIO/gitbook/blob/master/LICENSE
+ **/
+
+@font-face {
+    font-family: 'Open Sans';
+    font-style: normal;
+    font-weight: normal;
+    src: local('Open Sans Regular'),url('file:///Users/fatfat/Library/Application%20Support/abnerworks.Typora/themes/github/400.woff') format('woff')
+}
+
+@font-face {
+    font-family: 'Open Sans';
+    font-style: italic;
+    font-weight: normal;
+    src: local('Open Sans Italic'),url('file:///Users/fatfat/Library/Application%20Support/abnerworks.Typora/themes/github/400i.woff') format('woff')
+}
+
+@font-face {
+    font-family: 'Open Sans';
+    font-style: normal;
+    font-weight: bold;
+    src: local('Open Sans Bold'),url('file:///Users/fatfat/Library/Application%20Support/abnerworks.Typora/themes/github/700.woff') format('woff')
+}
+
+@font-face {
+    font-family: 'Open Sans';
+    font-style: italic;
+    font-weight: bold;
+    src: local('Open Sans Bold Italic'),url('file:///Users/fatfat/Library/Application%20Support/abnerworks.Typora/themes/github/700i.woff') format('woff')
+}
+
+html {
+    font-size: 16px;
+}
+
+body {
+    font-family: "Open Sans","Clear Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+    color: rgb(51, 51, 51);
+    line-height: 1.6;
+}
+
+#write{
+    max-width: 860px;
+  	margin: 0 auto;
+  	padding: 20px 30px 40px 30px;
+	padding-top: 20px;
+    padding-bottom: 100px;
+}
+#write > ul:first-child,
+#write > ol:first-child{
+    margin-top: 30px;
+}
+
+body > *:first-child {
+    margin-top: 0 !important;
+}
+body > *:last-child {
+    margin-bottom: 0 !important;
+}
+a {
+    color: #4183C4;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    position: relative;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    font-weight: bold;
+    line-height: 1.4;
+    cursor: text;
+}
+h1:hover a.anchor,
+h2:hover a.anchor,
+h3:hover a.anchor,
+h4:hover a.anchor,
+h5:hover a.anchor,
+h6:hover a.anchor {
+    /*background: url("file:///Users/fatfat/Library/Application%20Support/images/modules/styleguide/para.png") no-repeat 10px center;*/
+    text-decoration: none;
+}
+h1 tt,
+h1 code {
+    font-size: inherit;
+}
+h2 tt,
+h2 code {
+    font-size: inherit;
+}
+h3 tt,
+h3 code {
+    font-size: inherit;
+}
+h4 tt,
+h4 code {
+    font-size: inherit;
+}
+h5 tt,
+h5 code {
+    font-size: inherit;
+}
+h6 tt,
+h6 code {
+    font-size: inherit;
+}
+h1 {
+    padding-bottom: .3em;
+    font-size: 2.25em;
+    line-height: 1.2;
+    border-bottom: 1px solid #eee;
+}
+h2 {
+   padding-bottom: .3em;
+    font-size: 1.75em;
+    line-height: 1.225;
+    border-bottom: 1px solid #eee;
+}
+h3 {
+    font-size: 1.5em;
+    line-height: 1.43;
+}
+h4 {
+    font-size: 1.25em;
+}
+h5 {
+    font-size: 1em;
+}
+h6 {
+   font-size: 1em;
+    color: #777;
+}
+p,
+blockquote,
+ul,
+ol,
+dl,
+table{
+    margin: 0.8em 0;
+}
+li>ol,
+li>ul {
+    margin: 0 0;
+}
+hr {
+    height: 4px;
+    padding: 0;
+    margin: 16px 0;
+    background-color: #e7e7e7;
+    border: 0 none;
+    overflow: hidden;
+    box-sizing: content-box;
+    border-bottom: 1px solid #ddd;
+}
+
+body > h2:first-child {
+    margin-top: 0;
+    padding-top: 0;
+}
+body > h1:first-child {
+    margin-top: 0;
+    padding-top: 0;
+}
+body > h1:first-child + h2 {
+    margin-top: 0;
+    padding-top: 0;
+}
+body > h3:first-child,
+body > h4:first-child,
+body > h5:first-child,
+body > h6:first-child {
+    margin-top: 0;
+    padding-top: 0;
+}
+a:first-child h1,
+a:first-child h2,
+a:first-child h3,
+a:first-child h4,
+a:first-child h5,
+a:first-child h6 {
+    margin-top: 0;
+    padding-top: 0;
+}
+h1 p,
+h2 p,
+h3 p,
+h4 p,
+h5 p,
+h6 p {
+    margin-top: 0;
+}
+li p.first {
+    display: inline-block;
+}
+ul,
+ol {
+    padding-left: 30px;
+}
+ul:first-child,
+ol:first-child {
+    margin-top: 0;
+}
+ul:last-child,
+ol:last-child {
+    margin-bottom: 0;
+}
+blockquote {
+    border-left: 4px solid #dddddd;
+    padding: 0 15px;
+    color: #777777;
+}
+blockquote blockquote {
+    padding-right: 0;
+}
+table {
+    padding: 0;
+    word-break: initial;
+}
+table tr {
+    border-top: 1px solid #cccccc;
+    background-color: white;
+    margin: 0;
+    padding: 0;
+}
+table tr:nth-child(2n) {
+    background-color: #f8f8f8;
+}
+table tr th {
+    font-weight: bold;
+    border: 1px solid #cccccc;
+    text-align: left;
+    margin: 0;
+    padding: 6px 13px;
+}
+table tr td {
+    border: 1px solid #cccccc;
+    text-align: left;
+    margin: 0;
+    padding: 6px 13px;
+}
+table tr th:first-child,
+table tr td:first-child {
+    margin-top: 0;
+}
+table tr th:last-child,
+table tr td:last-child {
+    margin-bottom: 0;
+}
+
+.CodeMirror-gutters {
+    border-right: 1px solid #ddd;
+}
+
+.md-fences,
+code,
+tt {
+    border: 1px solid #ddd;
+    background-color: #f8f8f8;
+    border-radius: 3px;
+    padding: 0;
+    font-family: Consolas, "Liberation Mono", Courier, monospace;
+    padding: 2px 4px 0px 4px;
+    font-size: 0.9em;
+}
+
+.md-fences {
+    margin-bottom: 15px;
+    margin-top: 15px;
+    padding: 0.2em 1em;
+    padding-top: 8px;
+    padding-bottom: 6px;
+}
+.task-list{
+	padding-left: 0;
+}
+
+.task-list-item {
+	padding-left:32px;
+}
+
+.task-list-item input {
+  top: 3px;
+  left: 8px;
+}
+
+@media screen and (min-width: 914px) {
+    /*body {
+        width: 854px;
+        margin: 0 auto;
+    }*/
+}
+@media print {
+    html {
+        font-size: 13px;
+    }
+    table,
+    pre {
+        page-break-inside: avoid;
+    }
+    pre {
+        word-wrap: break-word;
+    }
+}
+
+.md-fences {
+	background-color: #f8f8f8;
+}
+#write pre.md-meta-block {
+	padding: 1rem;
+    font-size: 85%;
+    line-height: 1.45;
+    background-color: #f7f7f7;
+    border: 0;
+    border-radius: 3px;
+    color: #777777;
+    margin-top: 0 !important;
+}
+
+.mathjax-block>.code-tooltip {
+	bottom: .375rem;
+}
+
+#write>h3.md-focus:before{
+	left: -1.5625rem;
+	top: .375rem;
+}
+#write>h4.md-focus:before{
+	left: -1.5625rem;
+	top: .285714286rem;
+}
+#write>h5.md-focus:before{
+	left: -1.5625rem;
+	top: .285714286rem;
+}
+#write>h6.md-focus:before{
+	left: -1.5625rem;
+	top: .285714286rem;
+}
+.md-image>.md-meta {
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    font-family: Consolas, "Liberation Mono", Courier, monospace;
+    padding: 2px 4px 0px 4px;
+    font-size: 0.9em;
+    color: inherit;
+}
+
+.md-tag{
+	color: inherit;
+}
+
+.md-toc { 
+    margin-top:20px;
+    padding-bottom:20px;
+}
+
+#typora-quick-open {
+    border: 1px solid #ddd;
+    background-color: #f8f8f8;
+}
+
+#typora-quick-open-item {
+    background-color: #FAFAFA;
+    border-color: #FEFEFE #e5e5e5 #e5e5e5 #eee;
+    border-style: solid;
+    border-width: 1px;
+}
+
+#md-notification:before {
+    top: 10px;
+}
+
+/** focus mode */
+.on-focus-mode blockquote {
+    border-left-color: rgba(85, 85, 85, 0.12);
+}
+
+header, .context-menu, .megamenu-content, footer{
+    font-family: "Segoe UI", "Arial", sans-serif;
+}
+
+
+</style>
+</head>
+<body class='typora-export' >
+<div  id='write'  class = 'is-mac'><h1><a name='header-c5' class='md-header-anchor '></a>cookie和session学习笔记</h1><div class='md-toc' mdtype='toc'><p class="md-toc-content"><span class="md-toc-item md-toc-h1" data-ref="c5"><a class="md-toc-inner" style="" href="#header-c5">cookie和session学习笔记</a></span><span class="md-toc-item md-toc-h3" data-ref="c10"><a class="md-toc-inner" style="" href="#header-c10">题记</a></span><span class="md-toc-item md-toc-h3" data-ref="c17"><a class="md-toc-inner" style="" href="#header-c17">踩坑经过</a></span><span class="md-toc-item md-toc-h6" data-ref="c24"><a class="md-toc-inner" style="" href="#header-c24"><em>以上全是废话，下面开始记笔记。。。</em></a></span><span class="md-toc-item md-toc-h3" data-ref="c28"><a class="md-toc-inner" style="" href="#header-c28">背景知识</a></span><span class="md-toc-item md-toc-h5" data-ref="c29"><a class="md-toc-inner" style="" href="#header-c29">理解会话</a></span><span class="md-toc-item md-toc-h3" data-ref="c44"><a class="md-toc-inner" style="" href="#header-c44">Cookie</a></span><span class="md-toc-item md-toc-h5" data-ref="c45"><a class="md-toc-inner" style="" href="#header-c45">What is cookie</a></span><span class="md-toc-item md-toc-h5" data-ref="c54"><a class="md-toc-inner" style="" href="#header-c54">Cookie工作方式</a></span><span class="md-toc-item md-toc-h5" data-ref="c74"><a class="md-toc-inner" style="" href="#header-c74">Cookie 基础知识</a></span><span class="md-toc-item md-toc-h5" data-ref="c98"><a class="md-toc-inner" style="" href="#header-c98">cookie常见问题</a></span><span class="md-toc-item md-toc-h5" data-ref="c141"><a class="md-toc-inner" style="" href="#header-c141">Cookie基础用法</a></span><span class="md-toc-item md-toc-h5" data-ref="c196"><a class="md-toc-inner" style="" href="#header-c196">Cookie 高级篇</a></span><span class="md-toc-item md-toc-h3" data-ref="c262"><a class="md-toc-inner" style="" href="#header-c262">Session</a></span><span class="md-toc-item md-toc-h5" data-ref="c263"><a class="md-toc-inner" style="" href="#header-c263">cookie 虽然很方便，但是使用 cookie 有两个的弊端</a></span><span class="md-toc-item md-toc-h5" data-ref="c272"><a class="md-toc-inner" style="" href="#header-c272">session的产生</a></span><span class="md-toc-item md-toc-h5" data-ref="c283"><a class="md-toc-inner" style="" href="#header-c283">session 是如何工作的？</a></span><span class="md-toc-item md-toc-h5" data-ref="c296"><a class="md-toc-inner" style="" href="#header-c296">session 储存</a></span><span class="md-toc-item md-toc-h5" data-ref="c313"><a class="md-toc-inner" style="" href="#header-c313">session 基础用法</a></span></p></div><p></p><h3><a name='header-c10' class='md-header-anchor '></a>题记</h3><blockquote><p>​	最近在给一个已基本完成的web应用添加一个权限控制平台。需要给用户划分不同的角色，赋予不同的权限，即每个用户只能只用自己权限内的功能。底层设计：用户-角色，角色-权限等关系表，加上角色和权限的字典表，即可通过简单连表查询，由用户uid确定用户对应的所有权限列表。然后重点来了，如何在前后端做权限控制，于是开始了本次愉快的踩坑之旅。😀</p></blockquote><hr /><p></p><h3><a name='header-c17' class='md-header-anchor '></a>踩坑经过</h3><blockquote><p>​	因为前端采用所见即所得模式，即所有用户可以见到的功能都有权限使用，所以想到把用户权限保存在cookie里，页面渲染时根据cookie中的权限信息来决定是否显示某些元素组件。这样的优点是前后端都可以从cookie中获得用户的权限信息，后端服务器根据从cookie中取得的信息检查用户是否有执行action的权限，减少了每次action请求都查询数据库的额外负担，只要在cookie没有设置或失效时请求一次数据库即可。于是开始开心地跳坑了😂，当做完前后端开发，自测时突然发现cookie中直接红果果的记录着所有的权限，也就是说用户可以随意更改cookie中的信息，把自己变成超级用户，然后挥霍任性😂。。。然后开始查相关资料，发现正确做法是采用cookie+session策略，如果动手前先查查资料就不会掉坑了😂😂。</p></blockquote><p></p><hr /><h6><a name='header-c24' class='md-header-anchor '></a><em>以上全是废话，下面开始记笔记。。。</em></h6><hr /><p></p><h3><a name='header-c28' class='md-header-anchor '></a>背景知识</h3><h5><a name='header-c29' class='md-header-anchor '></a>理解会话</h5><blockquote><ul><li>会话是指在指定的时间段内在某个网站上发生的一系列互动。</li><li><a href='https://zh.wikipedia.org/wiki/%E4%BC%9A%E8%AF%9D_(%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6)'>wiki解释</a>：在网络领域，<strong>会话</strong>（<strong>session</strong>）是一种持久网络协议，在用户（或用户代理）端和服务器端之间创建关联，从而起到交换数据包的作用机制，session在网络协议（例如<a href='https://zh.wikipedia.org/wiki/Telnet'>telnet</a>或<a href='https://zh.wikipedia.org/wiki/FTP'>FTP</a>）中是非常重要的部分。</li><li>而Web应用程序是使用HTTP协议传输数据的。HTTP协议是无状态的协议。一旦数据交换完毕，客户端与服务器端的连接就会关闭，再次交换数据需要建立新的连接。这就意味着服务器无法从连接上跟踪会话。即用户A购买了一件商品放入购物车内，当再次购买商品时服务器已经无法判断该购买行为是属于用户A的会话还是用户B的会话了。要跟踪该会话，必须引入一种机制。Cookie就是这样的一种机制。它可以弥补HTTP协议无状态的不足。在Session出现之前，基本上所有的网站都采用Cookie来跟踪会话。</li></ul></blockquote><hr /><p></p><h3><a name='header-c44' class='md-header-anchor '></a>Cookie</h3><h5><a name='header-c45' class='md-header-anchor '></a>What is cookie</h5><blockquote><ul><li>“cookie 是存储于访问者的计算机中的变量。每当同一台计算机通过浏览器请求某个页面时，就会发送这个 cookie。你可以使用 JavaScript 来创建和取回 cookie 的值。” - w3school</li><li>Cookie技术是客户端的解决会话跟踪的一种方案，Cookie就是由服务器发给客户端的特殊信息，而这些信息以文本文件的方式存放在客户端，然后客户端每次向服务器发送请求的时候都会带上这些特殊的信息。让我们说得更具体一些：当用户使用浏览器访问一个支持Cookie的网站的时候，用户会提供包括用户名在内的个人信息并且提交至服务器；接着，服务器在向客户端回传相应的超文本的同时也会发回这些个人信息，当然这些信息并不是存放在HTTP响应体（Response Body）中的，而是存放于HTTP响应头（Response Header）；当客户端浏览器接收到来自服务器的响应之后，浏览器会将这些信息存放在一个统一的位置。自此，客户端再向服务器发送请求的时候，都会把相应的Cookie再次发回至服务器。而这次，Cookie信息则存放在HTTP请求头（Request Header）了。有了Cookie这样的技术实现，服务器在接收到来自客户端浏览器的请求之后，就能够通过分析存放于请求头的Cookie得到客户端特有的信息，从而动态生成与该客户端相对应的内容。</li></ul></blockquote><h5><a name='header-c54' class='md-header-anchor '></a>Cookie工作方式</h5><blockquote><ol start='' ><li><p><strong>首次(默认没有cookie状态下，如用户第一次登录)的请求</strong></p><p><img src='../images/without_cookie.png' alt='此处应该有图片' /></p></li><li><p><strong>第二次(具有cookie状态的请求)</strong></p><p><img src='../images/with_cookie.png' alt='此处应该有图片' /></p><blockquote><blockquote><p><strong>注：以上两张图片来自<a href='http://mertensming.github.io/2016/10/19/cookie-session/'>文章</a></strong></p></blockquote></blockquote><pre class='md-fences mock-cm' style='display:block;position:relative'>1. 首先，我们假设当前域名下还是没有 cookie 的
+2. 接下来，浏览器发送了一个请求给服务器（这个请求是还没带上 cookie 的）
+3. 服务器设置 cookie 并发送给浏览器（当然也可以不设置）
+4. 浏览器将 cookie 保存下来
+5. 接下来，以后的每一次请求，都会带上这些 cookie，发送给服务器</pre></li></ol></blockquote><p><em>以下部分来自</em><a href='http://www.cnblogs.com/Darren_code/'>Darren_聂微东</a>，特此鸣谢</p><h5><a name='header-c74' class='md-header-anchor '></a>Cookie 基础知识</h5><blockquote><ul><li><strong>cookie 是有大小限制的</strong>，每个 cookie 所存放的数据不能超过4kb，如果 cookie 字符串的长度超过4kb，则该属性将返回空字符串。</li><li><strong>存储方式</strong>： 由于 cookie 最终都是以文件形式存放在客户端计算机中，所以查看和修改 cookie 都是很方便的，这就是为什么常说 cookie 不能存放重要信息的原因。</li><li><strong>每个 cookie 的格式都是这样的</strong>：<cookie名>=&lt;值&gt;；名称和值都必须是合法的标示符。</li><li><strong>cookie 是存在有效期的</strong>。在默认情况下，一个 cookie 的生命周期就是在浏览器关闭的时候结束。如果想要 cookie 能在浏览器关掉之后还可以使用，就必须要为该 cookie 设置有效期，也就是 cookie 的失效日期。</li><li><strong>cookie值类型</strong>：alert(typeof document.cookie) ，结果是 <strong>string</strong>，不是<strong>array</strong> ..….💔</li><li><strong>cookie 有域和路径这个概念</strong>。域就是domain的概念，因为浏览器是个注意安全的环境，所以不同的域之间是不能互相访问 cookie 的(当然可以通过特殊设置的达到 cookie 跨域访问)。路径就是routing的概念，一个网页所创建的 cookie 只能被与这个网页在同一目录或子目录下得所有网页访问，而不能被其他目录下得网页访问。</li><li>其实创建cookie的方式和定义变量的方式有些相似，都需要使用 cookie 名称和 cookie 值。同个网站可以创建多个 cookie ，而多个 cookie 可以存放在同一个cookie 文件中。</li></ul></blockquote><h5><a name='header-c98' class='md-header-anchor '></a>cookie常见问题</h5><blockquote><ul><li><p><strong>cookie 存在两种类型</strong>：</p><ul><li>你浏览的当前网站本身设置的 cookie</li><li>来自在网页上嵌入广告或图片等其他域来源的<strong>第三方</strong>cookie (网站可通过使用这些 cookie 跟踪你的使用信息)</li></ul></li></ul><ul><li><p>刚刚基础知识里面有说到 cookie 生命周期的问题，其实 <strong>cookie 大致可分为两种状态</strong>：</p><ul><li>临时性质的cookie。当前使用的过程中网站会储存一些你的个人信息，当浏览器关闭后这些信息也会从计算机中删除</li><li>设置失效时间的cookie。就算浏览器关闭了，这些信息业依然会在计算机中。如 登录名称和密码，这样无须在每次到特定站点时都进行登录。这种cookie 可在计算机中保留几天、几个月甚至几年</li></ul></li><li><p><strong>cookie 有两种清除方式</strong>：</p><ul><li>通过浏览器工具清除 cookie (有第三方的工具，浏览器自身也有这种功能)</li><li>通过设置 cookie 的有效期来清除 cookie</li><li>注：<em>删除 cookie 有时可能导致某些网页无法正常运行</em></li></ul></li><li><p><strong>浏览器可以通过设置来接受和拒绝访问 cookie</strong>。</p></li><li><p>出于功能和性能的原因考虑，建议尽量降低 cookie 的使用数量，并且要尽量使用小 cookie。</p></li></ul></blockquote><h5><a name='header-c141' class='md-header-anchor '></a>Cookie基础用法</h5><blockquote><ol start='' ><li><p><strong>存取操作</strong>:</p><p>​	在使用JavaScript存取 cookie 时，必须要使用Document对象的 cookie 属性；一行代码介绍如何创建和修改一个 cookie ：</p><pre class="md-fences md-end-block" lang="javascript"> <div class="CodeMirror cm-s-inner CodeMirror-wrap"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 4px;"></div><div class="CodeMirror-hscrollbar" style="left: 0px; min-height: 18px;"><div style="height: 100%; min-height: 1px; width: 0px;"></div></div><div class="CodeMirror-vscrollbar" style="min-width: 18px;"><div style="min-width: 1px; height: 0px;"></div></div><div class="CodeMirror-scrollbar-filler"></div><div class="CodeMirror-gutter-filler"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; min-height: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines"><div style="position: relative; outline: none;"><div class="CodeMirror-measure"></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><pre class=""><span style="padding-right: 0.1px;">　　<span class="cm-variable">document</span>.<span class="cm-property">cookie</span>  <span class="cm-operator">=</span> <span class="cm-string">'username=Darren'</span></span></pre></div></div></div></div></div></div><div style="position: absolute; height: 30px; width: 1px; top: 0px;"></div><div class="CodeMirror-gutters" style="display: none; height: 22px;"></div></div></div></pre><p>　　以上代码中&#39;username&#39;表示 cookie 名称，&#39;Darren&#39;表示这个名称对应的值。假设 cookie 名称并不存在，那么就是创建一个新的 cookie；如果存在就是修改了这个 cookie 名称对应的值。如果要多次创建 cookie ，重复使用这个方法即可。</p></li><li><p><strong>读取操作</strong></p><p>​	要精确的对 cookie 进行读取其实很简单，就是对字符串进行操作。从w3school上copy这段代码来做分析：</p><pre class="md-fences md-end-block" lang="javascript"> <div class="CodeMirror cm-s-inner CodeMirror-wrap"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 4px;"></div><div class="CodeMirror-hscrollbar" style="left: 0px; min-height: 18px;"><div style="height: 100%; min-height: 1px; width: 0px;"></div></div><div class="CodeMirror-vscrollbar" style="min-width: 18px;"><div style="min-width: 1px; height: 0px;"></div></div><div class="CodeMirror-scrollbar-filler"></div><div class="CodeMirror-gutter-filler"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; min-height: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines"><div style="position: relative; outline: none;"><div class="CodeMirror-measure"></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" style=""><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><pre class=""><span style="padding-right: 0.1px;"><span class="cm-keyword">function</span> <span class="cm-def">getCookie</span>(<span class="cm-def">c_name</span>){</span></pre></div><pre class=""><span style="padding-right: 0.1px;">　　　　<span class="cm-keyword">if</span> (<span class="cm-variable">document</span>.<span class="cm-property">cookie</span>.<span class="cm-property">length</span><span class="cm-operator">&gt;</span><span class="cm-number">0</span>){　　<span class="cm-comment">//先查询cookie是否为空，为空就return ""</span></span></pre><pre class=""><span style="padding-right: 0.1px;">　　　　　　<span class="cm-variable">c_start</span><span class="cm-operator">=</span><span class="cm-variable">document</span>.<span class="cm-property">cookie</span>.<span class="cm-property">indexOf</span>(<span class="cm-variable-2">c_name</span> <span class="cm-operator">+</span> <span class="cm-string">"="</span>);　　<span class="cm-comment">//通过String对象的indexOf()来检查这个cookie是否存在，不存在就为 -1　　</span></span></pre><pre class=""><span style="padding-right: 0.1px;">　　　　　　<span class="cm-keyword">if</span> (<span class="cm-variable">c_start</span><span class="cm-operator">!=-</span><span class="cm-number">1</span>){ </span></pre><pre class=""><span style="padding-right: 0.1px;">　　　　　　　　<span class="cm-variable">c_start</span><span class="cm-operator">=</span><span class="cm-variable">c_start</span> <span class="cm-operator">+</span> <span class="cm-variable-2">c_name</span>.<span class="cm-property">length</span><span class="cm-operator">+</span><span class="cm-number">1</span>;　　<span class="cm-comment">//最后这个+1其实就是表示"="号啦，这样就获取到了cookie值的开始位置</span></span></pre><pre class=""><span style="padding-right: 0.1px;">　　　　　　　　<span class="cm-variable">c_end</span><span class="cm-operator">=</span><span class="cm-variable">document</span>.<span class="cm-property">cookie</span>.<span class="cm-property">indexOf</span>(<span class="cm-string">";"</span>,<span class="cm-variable">c_start</span>);　　<span class="cm-comment">//其实我刚看见indexOf()第二个参数的时候猛然有点晕，后来想起来表示指定的开始索引的位置...这句是为了得到值的结束位置。因为需要考虑是否是最后一项，所以通过";"号是否存在来判断</span></span></pre><pre class=""><span style="padding-right: 0.1px;">　　　　　　　　<span class="cm-keyword">if</span> (<span class="cm-variable">c_end</span><span class="cm-operator">==-</span><span class="cm-number">1</span>) <span class="cm-variable">c_end</span><span class="cm-operator">=</span><span class="cm-variable">document</span>.<span class="cm-property">cookie</span>.<span class="cm-property">length</span>;　　</span></pre><pre class=""><span style="padding-right: 0.1px;">　　　　　　　　<span class="cm-keyword">return</span> <span class="cm-variable">unescape</span>(<span class="cm-variable">document</span>.<span class="cm-property">cookie</span>.<span class="cm-property">substring</span>(<span class="cm-variable">c_start</span>,<span class="cm-variable">c_end</span>));　　<span class="cm-comment">//通过substring()得到了值。想了解unescape()得先知道escape()是做什么的，都是很重要的基础，想了解的可以搜索下，在文章结尾处也会进行讲解cookie编码细节</span></span></pre><pre class=""><span style="padding-right: 0.1px;">　　　　　　} </span></pre><pre class=""><span style="padding-right: 0.1px;">　　　　}</span></pre><pre class=""><span style="padding-right: 0.1px;">　　　　<span class="cm-keyword">return</span> <span class="cm-string">""</span>;</span></pre><pre class=""><span style="padding-right: 0.1px;">　　}　　</span></pre></div></div></div></div></div><div style="position: absolute; height: 30px; width: 1px; top: 0px;"></div><div class="CodeMirror-gutters" style="display: none; height: 550px;"></div></div></div></pre><p>　　当然想实现读取cookie的方法还有不少，比如数组，正则等</p></li><li><p><strong>设置cookie的有效期</strong></p><p>​	在默认的情况下，cookie 会在浏览器关闭的时候自动清除，但是我们可以通过expires来设置 cookie 的有效期。语法如下：</p><pre class="md-fences md-end-block" lang="javascript"> <div class="CodeMirror cm-s-inner CodeMirror-wrap"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 4px;"></div><div class="CodeMirror-hscrollbar" style="left: 0px; min-height: 18px;"><div style="height: 100%; min-height: 1px; width: 0px;"></div></div><div class="CodeMirror-vscrollbar" style="min-width: 18px;"><div style="min-width: 1px; height: 0px;"></div></div><div class="CodeMirror-scrollbar-filler"></div><div class="CodeMirror-gutter-filler"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; min-height: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines"><div style="position: relative; outline: none;"><div class="CodeMirror-measure"></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><pre class=""><span style="padding-right: 0.1px;">　　<span class="cm-variable">document</span>.<span class="cm-property">cookie</span> <span class="cm-operator">=</span> <span class="cm-string">"name=value;expires=date"</span></span></pre></div></div></div></div></div></div><div style="position: absolute; height: 30px; width: 1px; top: 0px;"></div><div class="CodeMirror-gutters" style="display: none; height: 22px;"></div></div></div></pre><p>　　上面代码中的date值为GMT(格林威治时间)格式的日期型字符串，生成方式如下：</p><pre class="md-fences md-end-block" lang="javascript"> <div class="CodeMirror cm-s-inner CodeMirror-wrap"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 4px;"></div><div class="CodeMirror-hscrollbar" style="left: 0px; min-height: 18px;"><div style="height: 100%; min-height: 1px; width: 0px;"></div></div><div class="CodeMirror-vscrollbar" style="min-width: 18px;"><div style="min-width: 1px; height: 0px;"></div></div><div class="CodeMirror-scrollbar-filler"></div><div class="CodeMirror-gutter-filler"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; min-height: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines"><div style="position: relative; outline: none;"><div class="CodeMirror-measure"></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><pre class=""><span style="padding-right: 0.1px;">　　<span class="cm-keyword">var</span> <span class="cm-def">_date</span> <span class="cm-operator">=</span> <span class="cm-keyword">new</span> <span class="cm-variable">Date</span>();</span></pre></div><pre class=""><span style="padding-right: 0.1px;">　　<span class="cm-variable">_date</span>.<span class="cm-property">setDate</span>(<span class="cm-variable">_date</span>.<span class="cm-property">getDate</span>()<span class="cm-operator">+</span><span class="cm-number">30</span>);</span></pre><pre class=""><span style="padding-right: 0.1px;">　　<span class="cm-variable">_date</span>.<span class="cm-property">toGMTString</span>();</span></pre></div></div></div></div></div><div style="position: absolute; height: 30px; width: 1px; top: 0px;"></div><div class="CodeMirror-gutters" style="display: none; height: 66px;"></div></div></div></pre><p>　　上面三行代码分解为几步来看：</p><ul><li>通过new生成一个Date的实例，得到当前的时间；</li><li>getDate()方法得到当前本地月份中的某一天，接着加上30就是我希望这个cookie能过在本地保存30天；</li><li>接着通过setDate()方法来设置时间；</li><li>最后 用toGMTString()方法把Date对象转换为字符串，并返回结果</li></ul><p>​</p><p>​	通过下面这个完整的函数来说明在创建 cookie 的过程中我们需要注意的地方 - 从w3school复制下来的。创建一个在 cookie 中存储信息的函数：</p><pre class="md-fences md-end-block" lang="javascript"> <div class="CodeMirror cm-s-inner CodeMirror-wrap"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 4px;"></div><div class="CodeMirror-hscrollbar" style="left: 0px; min-height: 18px;"><div style="height: 100%; min-height: 1px; width: 0px;"></div></div><div class="CodeMirror-vscrollbar" style="min-width: 18px;"><div style="min-width: 1px; height: 0px;"></div></div><div class="CodeMirror-scrollbar-filler"></div><div class="CodeMirror-gutter-filler"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; min-height: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines"><div style="position: relative; outline: none;"><div class="CodeMirror-measure"></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" style=""><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><pre class=""><span style="padding-right: 0.1px;"><span class="cm-number">1</span> 　<span class="cm-keyword">function</span> <span class="cm-def">setCookie</span>(<span class="cm-def">c_name</span>, <span class="cm-def">value</span>, <span class="cm-def">expiredays</span>){</span></pre></div><pre class=""><span style="padding-right: 0.1px;"><span class="cm-number">2</span> 　　　　<span class="cm-keyword">var</span> <span class="cm-def">exdate</span><span class="cm-operator">=</span><span class="cm-keyword">new</span> <span class="cm-variable">Date</span>();</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-number">3</span> 　　　　<span class="cm-variable-2">exdate</span>.<span class="cm-property">setDate</span>(<span class="cm-variable-2">exdate</span>.<span class="cm-property">getDate</span>() <span class="cm-operator">+</span> <span class="cm-variable-2">expiredays</span>);</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-number">4</span> 　　　　<span class="cm-variable">document</span>.<span class="cm-property">cookie</span><span class="cm-operator">=</span><span class="cm-variable-2">c_name</span><span class="cm-operator">+</span> <span class="cm-string">"="</span> <span class="cm-operator">+</span> <span class="cm-variable">escape</span>(<span class="cm-variable-2">value</span>) <span class="cm-operator">+</span> ((<span class="cm-variable-2">expiredays</span><span class="cm-operator">==</span><span class="cm-atom">null</span>) <span class="cm-operator">?</span> <span class="cm-string">""</span> : <span class="cm-string">";expires="</span><span class="cm-operator">+</span><span class="cm-variable-2">exdate</span>.<span class="cm-property">toGMTString</span>());</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-number">5</span> 　　}</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-number">6</span> 　　<span class="cm-variable">使用方法：setCookie</span>(<span class="cm-string">'username'</span>,<span class="cm-string">'Darren'</span>,<span class="cm-number">30</span>)  </span></pre></div></div></div></div></div><div style="position: absolute; height: 30px; width: 1px; top: 0px;"></div><div class="CodeMirror-gutters" style="display: none; height: 176px;"></div></div></div></pre><p>　　现在我们这个函数是按照天数来设置cookie的有效时间，如果想以其他单位（如：小时）来设置，那么改变第三行代码即可：</p><pre class="md-fences md-end-block" lang="javascript"> <div class="CodeMirror cm-s-inner CodeMirror-wrap"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 4px;"></div><div class="CodeMirror-hscrollbar" style="left: 0px; min-height: 18px;"><div style="height: 100%; min-height: 1px; width: 0px;"></div></div><div class="CodeMirror-vscrollbar" style="min-width: 18px;"><div style="min-width: 1px; height: 0px;"></div></div><div class="CodeMirror-scrollbar-filler"></div><div class="CodeMirror-gutter-filler"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; min-height: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines"><div style="position: relative; outline: none;"><div class="CodeMirror-measure"></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><pre class=""><span style="padding-right: 0.1px;">　　<span class="cm-variable">exdate</span>.<span class="cm-property">setHours</span>(<span class="cm-variable">exdate</span>.<span class="cm-property">getHours</span>() <span class="cm-operator">+</span> <span class="cm-variable">expiredays</span>);</span></pre></div></div></div></div></div></div><div style="position: absolute; height: 30px; width: 1px; top: 0px;"></div><div class="CodeMirror-gutters" style="display: none; height: 22px;"></div></div></div></pre><p>　　这样设置以后的cookie有效期就是按照小时为单位的。</p><p>　　常见问题中有提到清除 cookie 的两种方法，现在要说的是使 cookie 失效，通过把有效期的时间设置为一个已过期的时间。</p></li></ol></blockquote><h5><a name='header-c196' class='md-header-anchor '></a>Cookie 高级篇</h5><blockquote><ol start='' ><li><p><strong>Cookie 路径概念</strong></p><p>​	在基础知识中有提到 cookie 有域和路径的概念，现在来介绍路径在 cookie 中的作用。</p><p>　　cookie 一般都是由于用户访问页面而被创建的，可是并不是只有在创建 cookie 的页面才可以访问这个 cookie。</p><p>　　默认情况下，只有与创建 cookie 的页面在同一个目录或子目录下的网页才可以访问，这个是因为安全方面的考虑，造成不是所有页面都可以随意访问其他页面创建的 cookie。举个例子：</p><p>　　在 &quot;<a href='http://www.cnblogs.com/Darren_code/' target='_blank' >http://www.cnblogs.com/Darren_code/</a>&quot; 这个页面创建一个cookie，那么在&quot;/Darren_code/&quot;这个路径下的页面如： &quot;<a href='http://www.cnblogs.com/Darren_code/archive/2011/11/07/Cookie.html' target='_blank' >http://www.cnblogs.com/Darren_code/archive/2011/11/07/Cookie.html</a>&quot;这个页面默认就能取到cookie信息。</p><p>　　可在默认情况下， &quot;<a href='http://www.cnblogs.com' target='_blank' >http://www.cnblogs.com</a>&quot;或者 &quot;<a href='http://www.cnblogs.com/xxxx/' target='_blank' >http://www.cnblogs.com/xxxx/</a>&quot; 就不可以访问这个 cookie（光看没用，实践出真理^_^）。</p><p>　　那么如何让这个 cookie 能被其他目录或者父级的目录访问类，通过设置 cookie 的路径就可以实现。例子如下：</p><pre class="md-fences md-end-block" lang="javascript"> <div class="CodeMirror cm-s-inner CodeMirror-wrap"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 4px;"></div><div class="CodeMirror-hscrollbar" style="left: 0px; min-height: 18px;"><div style="height: 100%; min-height: 1px; width: 0px;"></div></div><div class="CodeMirror-vscrollbar" style="min-width: 18px;"><div style="min-width: 1px; height: 0px;"></div></div><div class="CodeMirror-scrollbar-filler"></div><div class="CodeMirror-gutter-filler"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; min-height: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines"><div style="position: relative; outline: none;"><div class="CodeMirror-measure"></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><pre class=""><span style="padding-right: 0.1px;">　　<span class="cm-variable">document</span>.<span class="cm-property">cookie</span> <span class="cm-operator">=</span> <span class="cm-string">"name=value;path=path"</span></span></pre></div><pre class=""><span style="padding-right: 0.1px;">　　<span class="cm-variable">document</span>.<span class="cm-property">cookie</span> <span class="cm-operator">=</span> <span class="cm-string">"name=value;expires=date;path=path"</span></span></pre></div></div></div></div></div><div style="position: absolute; height: 30px; width: 1px; top: 0px;"></div><div class="CodeMirror-gutters" style="display: none; height: 44px;"></div></div></div></pre><p> 　　红色字体path就是 cookie 的路径，最常用的例子就是让 cookie 在跟目录下,这样不管是哪个子页面创建的 cookie，所有的页面都可以访问到了:</p><pre class="md-fences md-end-block" lang="javascript"> <div class="CodeMirror cm-s-inner CodeMirror-wrap"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 4px;"></div><div class="CodeMirror-hscrollbar" style="left: 0px; min-height: 18px;"><div style="height: 100%; min-height: 1px; width: 0px;"></div></div><div class="CodeMirror-vscrollbar" style="min-width: 18px;"><div style="min-width: 1px; height: 0px;"></div></div><div class="CodeMirror-scrollbar-filler"></div><div class="CodeMirror-gutter-filler"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; min-height: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines"><div style="position: relative; outline: none;"><div class="CodeMirror-measure"></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><pre class=""><span style="padding-right: 0.1px;"><span class="cm-variable">document</span>.<span class="cm-property">cookie</span> <span class="cm-operator">=</span> <span class="cm-string">"name=Darren;path=/"</span></span></pre></div></div></div></div></div></div><div style="position: absolute; height: 30px; width: 1px; top: 0px;"></div><div class="CodeMirror-gutters" style="display: none; height: 22px;"></div></div></div></pre></li><li><p><strong>cookie 域概念</strong></p><p>​	路径能解决在同一个域下访问 cookie 的问题，咱们接着说 cookie 实现<strong>同域</strong>之间访问的问题。语法如下：</p><pre class="md-fences md-end-block" lang="javascript"> <div class="CodeMirror cm-s-inner CodeMirror-wrap"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 4px;"></div><div class="CodeMirror-hscrollbar" style="left: 0px; min-height: 18px;"><div style="height: 100%; min-height: 1px; width: 0px;"></div></div><div class="CodeMirror-vscrollbar" style="min-width: 18px;"><div style="min-width: 1px; height: 0px;"></div></div><div class="CodeMirror-scrollbar-filler"></div><div class="CodeMirror-gutter-filler"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; min-height: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines"><div style="position: relative; outline: none;"><div class="CodeMirror-measure"></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><pre class=""><span style="padding-right: 0.1px;">　　<span class="cm-variable">document</span>.<span class="cm-property">cookie</span> <span class="cm-operator">=</span> <span class="cm-string">"name=value;path=path;domain=domain"</span></span></pre></div></div></div></div></div></div><div style="position: absolute; height: 30px; width: 1px; top: 0px;"></div><div class="CodeMirror-gutters" style="display: none; height: 22px;"></div></div></div></pre><p>　　红色的domain就是设置的 cookie 域的值。</p><p>　　例如 &quot;<a href='www.qq.com' target='_blank' >www.qq.com</a>&quot; 与 &quot;sports.qq.com&quot; 公用一个关联的域名&quot;qq.com&quot;，我们如果想让 &quot;sports.qq.com&quot; 下的cookie被 &quot;<a href='www.qq.com' target='_blank' >www.qq.com</a>&quot; 访问，我们就需要用到 cookie 的domain属性，并且需要把path属性设置为 &quot;/&quot;。例：</p><pre class="md-fences md-end-block" lang="javascript"> <div class="CodeMirror cm-s-inner CodeMirror-wrap"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 4px;"></div><div class="CodeMirror-hscrollbar" style="left: 0px; min-height: 18px;"><div style="height: 100%; min-height: 1px; width: 0px;"></div></div><div class="CodeMirror-vscrollbar" style="min-width: 18px;"><div style="min-width: 1px; height: 0px;"></div></div><div class="CodeMirror-scrollbar-filler"></div><div class="CodeMirror-gutter-filler"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; min-height: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines"><div style="position: relative; outline: none;"><div class="CodeMirror-measure"></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><pre class=""><span style="padding-right: 0.1px;">　　<span class="cm-variable">document</span>.<span class="cm-property">cookie</span> <span class="cm-operator">=</span> <span class="cm-string">"username=Darren;path=/;domain=qq.com"</span></span></pre></div></div></div></div></div></div><div style="position: absolute; height: 30px; width: 1px; top: 0px;"></div><div class="CodeMirror-gutters" style="display: none; height: 44px;"></div></div></div></pre><p>　　注：一定的是同域之间的访问，不能把domain的值设置成非主域的域名。</p></li><li><p><strong>cookie 安全性</strong></p><p>通常 cookie 信息都是使用HTTP连接传递数据，这种传递方式很容易被查看，所以 cookie 存储的信息容易被窃取。假如 cookie 中所传递的内容比较重要，那么就要求使用加密的数据传输。</p></li></ol><p>   　　所以 cookie 的这个属性的名称是“secure”，默认的值为空。如果一个 cookie 的属性为secure，那么它与服务器之间就通过HTTPS或者其它安全协议传递数据。语法如下：</p><pre class="md-fences md-end-block" lang="javascript"> <div class="CodeMirror cm-s-inner CodeMirror-wrap"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 4px;"></div><div class="CodeMirror-hscrollbar" style="left: 0px; min-height: 18px;"><div style="height: 100%; min-height: 1px; width: 0px;"></div></div><div class="CodeMirror-vscrollbar" style="min-width: 18px;"><div style="min-width: 1px; height: 0px;"></div></div><div class="CodeMirror-scrollbar-filler"></div><div class="CodeMirror-gutter-filler"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; min-height: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines"><div style="position: relative; outline: none;"><div class="CodeMirror-measure"></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><pre class=""><span style="padding-right: 0.1px;"> &nbsp; 　　<span class="cm-variable">document</span>.<span class="cm-property">cookie</span> <span class="cm-operator">=</span> <span class="cm-string">"username=Darren;secure"</span></span></pre></div></div></div></div></div></div><div style="position: absolute; height: 30px; width: 1px; top: 0px;"></div><div class="CodeMirror-gutters" style="display: none; height: 22px;"></div></div></div></pre><p>   　　把cookie设置为secure，只保证 cookie 与服务器之间的数据传输过程加密，而保存在本地的 cookie文件并不加密。如果想让本地cookie也加密，得自己加密数据。</p><p>   　　注：就算设置了secure 属性也并不代表他人不能看到你机器本地保存的 cookie 信息。</p><ol start='4' ><li><p><strong>cookie 编码细节</strong></p><p>原本来想在常见问题那段介绍cookie编码的知识，因为如果对这个不了解的话编码问题确实是一个坑，所以还是详细说说。</p></li></ol><p>   　　在输入cookie信息时不能包含空格，分号，逗号等特殊符号，而在一般情况下，cookie 信息的存储都是采用未编码的方式。所以，在设置 cookie 信息以前要先使用escape()函数将 cookie 值信息进行编码，在获取到 cookie 值得时候再使用unescape()函数把值进行转换回来。如设置cookie时：</p><pre class="md-fences md-end-block" lang="javascript"> <div class="CodeMirror cm-s-inner CodeMirror-wrap"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 4px;"></div><div class="CodeMirror-hscrollbar" style="left: 0px; min-height: 18px;"><div style="height: 100%; min-height: 1px; width: 0px;"></div></div><div class="CodeMirror-vscrollbar" style="min-width: 18px;"><div style="min-width: 1px; height: 0px;"></div></div><div class="CodeMirror-scrollbar-filler"></div><div class="CodeMirror-gutter-filler"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; min-height: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines"><div style="position: relative; outline: none;"><div class="CodeMirror-measure"></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><pre class=""><span style="padding-right: 0.1px;"> &nbsp; 　　<span class="cm-variable">document</span>.<span class="cm-property">cookie</span> <span class="cm-operator">=</span> <span class="cm-variable">name</span> <span class="cm-operator">+</span> <span class="cm-string">"="</span><span class="cm-operator">+</span> <span class="cm-variable">escape</span> (<span class="cm-variable">value</span>)</span></pre></div></div></div></div></div></div><div style="position: absolute; height: 30px; width: 1px; top: 0px;"></div><div class="CodeMirror-gutters" style="display: none; height: 22px;"></div></div></div></pre><p>   　　再看看基础用法时提到过的getCookie()内的一句：</p><pre class="md-fences md-end-block" lang="javascript"> <div class="CodeMirror cm-s-inner CodeMirror-wrap"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 4px;"></div><div class="CodeMirror-hscrollbar" style="left: 0px; min-height: 18px;"><div style="height: 100%; min-height: 1px; width: 0px;"></div></div><div class="CodeMirror-vscrollbar" style="min-width: 18px;"><div style="min-width: 1px; height: 0px;"></div></div><div class="CodeMirror-scrollbar-filler"></div><div class="CodeMirror-gutter-filler"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; min-height: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines"><div style="position: relative; outline: none;"><div class="CodeMirror-measure"></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><pre class=""><span style="padding-right: 0.1px;"> &nbsp; 　　<span class="cm-keyword">return</span> <span class="cm-variable">unescape</span>(<span class="cm-variable">document</span>.<span class="cm-property">cookie</span>.<span class="cm-property">substring</span>(<span class="cm-variable">c_start</span>,<span class="cm-variable">c_end</span>))</span></pre></div></div></div></div></div></div><div style="position: absolute; height: 30px; width: 1px; top: 0px;"></div><div class="CodeMirror-gutters" style="display: none; height: 44px;"></div></div></div></pre><p>   　　这样就不用担心因为在cookie值中出现了特殊符号而导致 cookie 信息出错了。</p><p>   ​</p></blockquote><hr /><p></p><h3><a name='header-c262' class='md-header-anchor '></a>Session</h3><h5><a name='header-c263' class='md-header-anchor '></a>cookie 虽然很方便，但是使用 cookie 有两个的弊端</h5><blockquote><ol start='' ><li>cookie 中的所有数据在客户端就可以被修改。这就意味着数据非常容易被伪造，一些重要的数据就不能存放在 cookie 中。</li><li>而且如果 cookie 中数据字段太多会影响传输效率。</li></ol></blockquote><h5><a name='header-c272' class='md-header-anchor '></a>session的产生</h5><p>为了解决这些问题，就产生了 session</p><blockquote><ol start='' ><li>Session不同于Cookie，Session 是存储在服务器端的，远程用户没办法修改 Session 文件的内容，而且可以减少每次为了验证 Cookie 而传递密码的不安全性了（Session 验证只需要传递一次，假如你没有使用 SSL 安全协议的话）。即使密码进行了 md5 加密，也是很容易被截获的。</li><li>Session 还有很多优点，比如控制容易，可以按照用户自定义存储等（存储于数据库）。</li></ol></blockquote><h5><a name='header-c283' class='md-header-anchor '></a>session 是如何工作的？</h5><blockquote><ol start='' ><li><p>每个 session 都对应一个 session_id，通过 session_id 可以查询到对应的 session</p></li><li><p>session_id 通常是存放在客户端的 cookie 中，服务端存好 session 之后将对应的 session_id 设置在 cookie 中发送给客户端</p></li><li><p>当请求到来时，服务端检查 cookie 中保存的 session_id 并通过这个 session_id 与服务器端的 session 关联起来，进行数据的保存和修改</p><pre class='md-fences mock-cm' style='display:block;position:relative'>这意思就是说，当你浏览一个网页时，服务端随机产生一个很长的字符串，然后存在你 cookie 中。当你下次访问时，cookie 会带有这个字符串，然后浏览器就知道你是上次访问过的某某某，然后从服务器的存储中取出上次记录在你身上的数据。由于字符串是随机产生的，而且位数足够多，所以也不担心有人能够伪造。</pre></li></ol></blockquote><h5><a name='header-c296' class='md-header-anchor '></a>session 储存</h5><p>session 的储存有四个常用选项：内存、 cookie、缓存、数据库</p><blockquote><ol start='' ><li><strong>内存</strong>：开发环境存内存比较方便，问题是不能够共享状态（只能在本机访问）</li><li><strong>cookie</strong>：使用 cookie 来储存 session 的话，session 保存在用户浏览器端，每次用户访问时，都会主动带上他自己的信息。安全性的话，只要遵照最佳实践来，也是有保证的。它的弊端是增大了数据量传输，好处是比较方便</li><li><strong>缓存</strong>：可以共享</li><li><strong>数据库</strong>：可以共享</li></ol></blockquote><h5><a name='header-c313' class='md-header-anchor '></a>session 基础用法</h5><blockquote><ol start='' ><li><p><strong>php启用session</strong>：</p><ul><li><p>在php配置文件php.ini中设置 session.auto_start = 1</p><pre class='md-fences mock-cm' style='display:block;position:relative'>与session存储相关php.ini设置
+1. session.save_handler = file
+用于读取/回写session数据的方式，默认是files。它会让PHP的session管理函数使用指定的文本文件存储session数据
+2. session.save_path =“/var/lib/php/session”
+指定保存session文件的目录，可以指定到别的目录，但是指定目录必须要有httpd守护进程属主(比如apache或www等)写权限，否则无法回存session数据。当指定目录不存在时，php session环境初始化函数是不会帮你创建指定目录的，所以需要你手工建立指定目录。
+它还可以写成这样session.save_path =“N;/path” 其中N是整数。这样使得不是所有的session文件都保存在同一个目录中，而是分散在不同目录。这对于服务器处理大量session文件是很有帮助的。(注:目录需要自己手工创建)
+3. session.auto_start = 0
+如果启用该选项，用户的每次请求都会初始化session。我们推荐不启用该设置，最好通过session_start()显示地初始化session。</pre><p>​</p></li><li><p>使用 session_start() 函数:</p><pre class='md-fences mock-cm' style='display:block;position:relative'>session_start()
+函数session_start会初始化session，也标识着session生命周期的开始。要使用session，必须初始化一个session环境。有点类似于OOP概念中调用构造函数构创建对象实例一样。
+session初始化操作，声明一个全局数组$_SESSION，映射寄存在内存的session数据。如果session文件已经存在，并且保存有session数据，session_start()则会读取session数据，填入$_SESSION中，开始一个新的session生命周期。</pre></li></ul></li><li><p><strong>php中session相关函数详解</strong>：</p><pre class='md-fences mock-cm' style='display:block;position:relative'>1. session_start()：如上所述；
+
+2. $_SESSION：它是一个全局变量，类型是Array,映射了session生命周期的session数据，寄存在内存中。在session初始化的时候，从session文件中读取数据，填入该变量中。在session生命周期结束时，将$_SESSION数据写回session文件。
+
+3. session_register()：在session生命周期内，使用全局变量名称将注全局变量注册到当前session中。所谓注册，就是将变量填入$_SESSION中，值为NULL。它不会对session文件进行任何IO操作，只是影响$_SESSION变量。注意，它的正确写法是session_register(‘varname’)，而不是session_register($varname)
+
+4. session_unregister()：与session_register操作正好相反，即在session生命周期,从当前session注销指定变量。同样只影响$_SESSION，并不进行任何IO操作。
+
+5. session_unset()：在session生命周期，从当前session中注销全部session数据，让$_SESSION成为一个空数组。它与unset($_SESSION)的区别在于:unset直接删除$_SESSION变量，释放内存资源;另一个区别在于，session_unset()仅在session生命周期能够操作$_SESSION数组，而unset()则在整个页面(page)生命周期都能操作$_SESSION数组。session_unset()同样不进行任何IO操作，只影响$_SESSION数组。
+
+6. session_destroy()：如果说session_start()初始化一个session的话，而它则注销一个session。意味着session生命周期结束了。在session生命周期结整后，session_register, session_unset, session_register都将不能操作$_SESSION数组，而$_SESSION数组依然可以被unset()等函数操作。这时，session意味着是未定义的，而$_SESSION依然是一个全局变量，他们脱离了关映射关系。
+通过session_destroy()注销session,除了结束session生命周期外，它还会删除sesion文件，但不会影响当前$_SESSION变量。即它会产生一个IO操作。
+
+7. session_regenerate_id()：调用它，会给当前用户重新分配一个新的session id。并且在结束当前页面生命周期的时候，将当前session数据写入session文件。前提是，调用此函数之前，当前session生命周期没有被终止（参考第9点）。它会产生一个IO操作，创建一个新的session文件，创建新的session文件的是在session结束之前，而不是调用此函数就立即创建新的session文件。
+
+8. session_commit()：session_commit()函数是session_write_close()函数的别名。它会结束当前session的生命周期，并且将session数据立即强制写入session文件。不推荐通过session_commit()来手工写入session数据，因为PHP会在页面生命周期结束的时候，自动结束当前没有终止的session生命周期。它会产生一个IO写操作
+
+9. end session：结束session，默认是在页面生命周期结束的之前，PHP会自动结束当前没有终止的session。但是还可以通过session_commit()与session_destroy()二个函数提前结束session。不管是哪种方式，结束session都会产生IO操作，分别不一样。默认情况，产生一个IO写操作，将当前session数据写回session文件。session_commit()则是调用该函数那刻，产生一个IO写操作，将session数据写回session文件。而session_destroy()不一样在于，它不会将数据写回session文件，而是直接删除当前session文件。有趣的是，不管是session_commit()，还是session_destroy()都不会清空$_SESSION数组，更不会删除$_SESSION数组，只是所有session_*函数不能再操作session数据，因为当前的session生命周期终止了，即不能操作一个未定义对象。</pre><p>​</p></li></ol></blockquote><p></p><p></p></div>
+</body>
+</html>
